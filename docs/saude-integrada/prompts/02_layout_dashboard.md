@@ -1,0 +1,7 @@
+Etapa 2: implemente a **base visual autenticada e a página Visão Geral**, mantendo a infraestrutura atual. Use `referencias/01_DASHBOARD_APROVADO.png` como guia visual principal e `referencias/03_LOGO_AMPLIMED_OFICIAL_FORNECIDO.png` como fonte da marca Amplimed. Reproduza com alta fidelidade a hierarquia: sidebar esquerda com produto Saúde Integrada, barra superior com marcas Unimed Blumenau + Amplimed, título, usuário logado e sair; conteúdo responsivo com cartões KPI, gráficos e uma prévia da tabela.
+
+Design: cards brancos com radius médio, bordas/sombras discretas, verde Unimed, acentos roxos discretos, títulos legíveis. Sidebar destacando rota atual; estados loading/empty/error claros; tabela horizontalmente rolável no mobile. Uso de ícones de uma única biblioteca já instalada. Não incorporar telas como imagens estáticas. Não crie botões sem ação.
+
+KPIs: total de registros, clínicas pelo nome normalizado, médicos distintos por CPF válido dentre permissão Médico, última importação. Nunca incluir o card "Registros com permissão Médico 410". Não usar valores do mockup hardcoded; enquanto API não estiver pronta, renderizar estados vazios ou dados mock explicitamente isolados e removíveis, jamais confundidos com dados reais. Gráficos devem refletir respostas do backend.
+
+Foco desta etapa: composição visual, navegação e componentes reutilizáveis. Não modificar esquema Oracle ainda. Ao final, apresente checklist de semelhança com a referência e capturas se houver ambiente para isso.

@@ -1,0 +1,7 @@
+Etapa 3: crie as telas funcionais **Clínicas** e **Usuários**, mantendo os mesmos componentes visuais do dashboard.
+
+Clínicas: busca por nome; grid/tabela ordenável de nomes originais de clínica, contagem de registros, médicos distintos com CPF válido por clínica, total de usuários e último login válido conhecido; clique abre detalhe com profissionais e todas as informações vinculadas. A identificação de clínica é **somente pelo texto do campo Clínica**. Crie uma chave derivada para agrupamento: trim, colapso de espaços e uppercase, sem fazer renomeação inteligente; preserve o nome original e mostre avisos sobre variantes suspeitas em vez de agrupá-las indevidamente. `Usuclin` não é ID oficial; apenas dado original.
+
+Usuários: tabela paginada, busca, filtros por clínica, especialidade, permissão e situação. Disponibilize em detalhe as 12 colunas do Excel: Nome, Email, CPF, CRM, Especialidade, Permissão, Perfil, Situação, Data de Criação, Clínica, Usuclin, Último login. Evite mostrar CPF inteiro na listagem; detalhe completo/exportação apenas se o controle de acesso permitir. Preserve valores originais e marque data inválida como "Não informada" sem perder texto original.
+
+Considerar que uma pessoa pode ter múltiplos vínculos; nunca deduplicar linhas da importação. Reutilize APIs/serviços existentes, sem inventar dados. Não modifique AD. Entregue testes para filtros e agrupamentos.
