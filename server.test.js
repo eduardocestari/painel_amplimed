@@ -46,6 +46,10 @@ test('página e sessão exigem autenticação', async () => {
   assert.equal(protectedPage.status, 302);
   assert.equal(protectedPage.headers.get('location'), '/');
   assert.equal((await fetch(`${base}/api/dashboard`)).status, 401);
+  for (const path of ['/api/clinicas', '/api/clinicas/detalhe', '/api/usuarios', '/api/usuarios/detalhe']) {
+    assert.equal((await fetch(`${base}${path}`)).status, 401);
+  }
+  assert.equal((await fetch(`${base}/dashboard/usuarios`, { redirect: 'manual' })).status, 302);
 });
 
 test('AD rejeita senha incorreta e cria sessão com senha correta', async () => {
@@ -74,6 +78,16 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   assert.deepEqual(data.charts.especialidades, []);
   const clinics = await fetch(`${base}/dashboard/clinicas`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(clinics.status, 200);
+  const usersPage = await fetch(`${base}/dashboard/usuarios`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(usersPage.status, 200);
+  const clinicsData = await fetch(`${base}/api/clinicas`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(clinicsData.status, 200);
+  assert.equal((await clinicsData.json()).status, 'awaiting_import');
+  const usersData = await fetch(`${base}/api/usuarios`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(usersData.status, 200);
+  assert.equal((await usersData.json()).status, 'awaiting_import');
+  const badQuery = await fetch(`${base}/api/usuarios?page=0`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(badQuery.status, 400);
   const logout = await fetch(`${base}/api/auth/logout`, { method: 'POST', headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(logout.status, 200);
   const afterLogout = await fetch(`${base}/api/me`, { headers: { Cookie: cookie.split(';')[0] } });

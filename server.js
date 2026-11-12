@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { authConfig, authenticate, clearFailures, createSession, deleteSession, getSession, isRateLimited, recordFailure } from './auth.js';
 import { getDashboardOverview } from './internal/dashboard.js';
+import { createRegistry } from './internal/registry.js';
 
 const root = new URL('.', import.meta.url);
 const dashboardRoutes = new Set(['/dashboard', '/dashboard/clinicas', '/dashboard/usuarios', '/dashboard/importacoes']);
@@ -36,15 +37,17 @@ function cookieValue(req, name) {
   return item ? item.slice(name.length + 1) : null;
 }
 
-export function createApp({ env = process.env, fetcher = fetch } = {}) {
+export function createApp({ env = process.env, fetcher = fetch, registry = createRegistry() } = {}) {
   const config = authConfig(env);
   const cookieName = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(env.SESSION_COOKIE_NAME || '') ? env.SESSION_COOKIE_NAME : 'painel_session';
   const ttlSeconds = Math.min(86400, Math.max(300, Number(env.SESSION_TTL_SECONDS || 28800)));
   const secure = String(env.SESSION_COOKIE_SECURE).toUpperCase() === 'TRUE' || env.NODE_ENV === 'production';
   const cookieAttrs = `Path=/; HttpOnly; SameSite=Lax${secure ? '; Secure' : ''}`;
+  const personalViewers = new Set(String(env.SAUDE_INTEGRADA_PII_LOGINS || '').split(',').map(value => value.trim().toLowerCase()).filter(Boolean));
 
   return async (req, res) => {
-    const path = new URL(req.url, 'http://localhost').pathname;
+    const requestUrl = new URL(req.url, 'http://localhost');
+    const path = requestUrl.pathname;
     try {
       if (path === '/api/me' && req.method === 'GET') {
         const user = getSession(cookieValue(req, cookieName));
@@ -55,6 +58,17 @@ export function createApp({ env = process.env, fetcher = fetch } = {}) {
         const user = getSession(cookieValue(req, cookieName));
         if (!user) { sendJson(res, 401, { detail: 'Sessão expirada.' }); return; }
         sendJson(res, 200, getDashboardOverview());
+        return;
+      }
+      if (req.method === 'GET' && ['/api/clinicas', '/api/clinicas/detalhe', '/api/usuarios', '/api/usuarios/detalhe'].includes(path)) {
+        const user = getSession(cookieValue(req, cookieName));
+        if (!user) { sendJson(res, 401, { detail: 'Sessão expirada.' }); return; }
+        let data;
+        if (path === '/api/clinicas') data = await registry.listClinics(requestUrl.searchParams);
+        else if (path === '/api/clinicas/detalhe') data = await registry.clinicDetail(requestUrl.searchParams);
+        else if (path === '/api/usuarios') data = await registry.listUsers(requestUrl.searchParams);
+        else data = await registry.userDetail(requestUrl.searchParams.get('id'), { canViewPersonal: personalViewers.has(user.login.toLowerCase()) });
+        sendJson(res, data ? 200 : 404, data || { detail: 'Registro não encontrado.' });
         return;
       }
       if (path === '/api/auth/logout' && req.method === 'POST') {
@@ -103,8 +117,9 @@ export function createApp({ env = process.env, fetcher = fetch } = {}) {
         return;
       }
       sendJson(res, 404, { detail: 'Não encontrado.' });
-    } catch {
-      if (!res.headersSent) sendJson(res, 500, { detail: 'Erro interno.' });
+    } catch (error) {
+      if (!res.headersSent) sendJson(res, error?.status === 400 ? 400 : 500,
+        { detail: error?.status === 400 ? 'Parâmetros de consulta inválidos.' : 'Erro interno.' });
     }
   };
 }

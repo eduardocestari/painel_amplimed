@@ -75,7 +75,42 @@
           </section>
         </section>
 
-        <section id="placeholder-page" class="placeholder-page" hidden aria-labelledby="placeholder-title"><div class="placeholder-card"><span class="placeholder-icon"><svg aria-hidden="true"><use href="#i-list"></use></svg></span><span class="eyebrow">PRÓXIMA ETAPA</span><h1 id="placeholder-title"></h1><p id="placeholder-message"></p><a class="button-primary" href="/dashboard">Voltar à Visão Geral</a></div></section>
+        <section id="clinics-page" class="data-page" hidden aria-labelledby="clinics-title">
+          <div class="page-heading"><h1 id="clinics-title">Clínicas</h1><p>Agrupamento pelo texto da coluna Clínica; Usuclin permanece como dado original.</p></div>
+          <div class="panel data-panel">
+            <form id="clinics-form" class="data-toolbar"><label class="search-filter"><svg aria-hidden="true"><use href="#i-search"></use></svg><span class="sr-only">Buscar clínica pelo nome</span><input id="clinics-search" name="q" type="search" maxlength="100" placeholder="Buscar clínica pelo nome..."></label><button class="button-primary" type="submit">Buscar</button><button id="clinics-clear" class="button-secondary" type="button">Limpar</button></form>
+            <p id="clinics-status" class="data-status" role="status">Carregando clínicas...</p>
+            <div class="table-scroll"><table class="data-table"><thead><tr><th><button class="sort-button" type="button" data-clinic-sort="nome">Clínica ↕</button></th><th><button class="sort-button" type="button" data-clinic-sort="registros">Registros ↕</button></th><th><button class="sort-button" type="button" data-clinic-sort="medicosUnicos">Médicos únicos ↕</button></th><th><button class="sort-button" type="button" data-clinic-sort="usuarios">Pessoas com CPF válido ↕</button></th><th><button class="sort-button" type="button" data-clinic-sort="ultimoLogin">Último login válido ↕</button></th></tr></thead><tbody id="clinics-rows"><tr><td colspan="5" class="empty-cell">Carregando...</td></tr></tbody></table></div>
+            <div class="data-footer"><span id="clinics-count">—</span><div class="pager"><button id="clinics-prev" class="button-secondary" type="button" disabled>Anterior</button><span id="clinics-page-label">—</span><button id="clinics-next" class="button-secondary" type="button" disabled>Próxima</button></div></div>
+          </div>
+        </section>
+
+        <section id="clinic-detail-page" class="data-page" hidden aria-labelledby="clinic-detail-title">
+          <a class="back-link" href="/dashboard/clinicas">← Voltar às clínicas</a>
+          <div class="page-heading"><h1 id="clinic-detail-title">Clínica</h1><p>Profissionais e vínculos associados ao nome da clínica na planilha.</p><p id="clinic-original-names" class="original-names" hidden></p></div>
+          <p id="clinic-variants" class="variant-warning" hidden></p>
+          <div class="detail-summary"><article class="panel summary-card"><span>Registros</span><strong id="clinic-records">—</strong></article><article class="panel summary-card"><span>Médicos únicos com CPF válido</span><strong id="clinic-doctors">—</strong></article><article class="panel summary-card"><span>Pessoas com CPF válido</span><strong id="clinic-people">—</strong></article><article class="panel summary-card"><span>Último login válido</span><strong id="clinic-login">—</strong></article></div>
+          <div class="panel data-panel"><h2>Profissionais e vínculos</h2><p id="clinic-detail-status" class="data-status" role="status">Carregando...</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Nome</th><th>CPF</th><th>CRM</th><th>Especialidade</th><th>Permissão</th><th>Situação</th><th>Último login</th></tr></thead><tbody id="clinic-people-rows"><tr><td colspan="7" class="empty-cell">Carregando...</td></tr></tbody></table></div><div class="data-footer"><span id="clinic-detail-count">—</span><div class="pager"><button id="clinic-detail-prev" class="button-secondary" type="button" disabled>Anterior</button><span id="clinic-detail-page-label">—</span><button id="clinic-detail-next" class="button-secondary" type="button" disabled>Próxima</button></div></div></div>
+        </section>
+
+        <section id="users-page" class="data-page" hidden aria-labelledby="users-title">
+          <div class="page-heading"><h1 id="users-title">Usuários</h1><p>Cada linha representa um vínculo da importação. CPF aparece mascarado nesta lista.</p></div>
+          <div class="panel data-panel">
+            <form id="users-form" class="users-filters"><label class="search-filter"><svg aria-hidden="true"><use href="#i-search"></use></svg><span class="sr-only">Buscar por nome, CRM ou especialidade</span><input id="users-search" name="q" type="search" maxlength="100" placeholder="Nome, CRM ou especialidade..."></label><label><span class="sr-only">Clínica</span><select id="users-clinic" name="clinica"><option value="">Todas as clínicas</option></select></label><label><span class="sr-only">Especialidade</span><select id="users-specialty" name="especialidade"><option value="">Todas as especialidades</option></select></label><label><span class="sr-only">Permissão</span><select id="users-permission" name="permissao"><option value="">Todas as permissões</option></select></label><label><span class="sr-only">Situação</span><select id="users-situation" name="situacao"><option value="">Todas as situações</option></select></label><button class="button-primary" type="submit">Filtrar</button><button id="users-clear" class="button-secondary" type="button">Limpar</button></form>
+            <p id="users-status" class="data-status" role="status">Carregando usuários...</p>
+            <div class="table-scroll"><table class="data-table"><thead><tr><th>Nome</th><th>CPF</th><th>Clínica</th><th>Especialidade</th><th>Permissão</th><th>Situação</th><th>Último login</th></tr></thead><tbody id="users-rows"><tr><td colspan="7" class="empty-cell">Carregando...</td></tr></tbody></table></div>
+            <div class="data-footer"><span id="users-count">—</span><div class="pager"><button id="users-prev" class="button-secondary" type="button" disabled>Anterior</button><span id="users-page-label">—</span><button id="users-next" class="button-secondary" type="button" disabled>Próxima</button></div></div>
+          </div>
+        </section>
+
+        <section id="user-detail-page" class="data-page" hidden aria-labelledby="user-detail-title">
+          <a class="back-link" href="/dashboard/usuarios">← Voltar aos usuários</a>
+          <div class="page-heading"><h1 id="user-detail-title">Detalhe do usuário</h1><p>Dados originais do vínculo importado, com datas normalizadas quando válidas.</p></div>
+          <p id="personal-restriction" class="privacy-note" hidden>CPF e e-mail completos exigem autorização específica; os dados pessoais estão ocultos nesta sessão.</p>
+          <div class="panel data-panel"><p id="user-detail-status" class="data-status" role="status">Carregando detalhe...</p><dl id="user-fields" class="detail-fields"></dl></div>
+        </section>
+
+        <section id="placeholder-page" class="placeholder-page" hidden aria-labelledby="placeholder-title"><div class="placeholder-card"><span class="placeholder-icon"><svg aria-hidden="true"><use href="#i-upload"></use></svg></span><span class="eyebrow">PRÓXIMA ETAPA</span><h1 id="placeholder-title"></h1><p id="placeholder-message"></p><a class="button-primary" href="/dashboard">Voltar à Visão Geral</a></div></section>
       </main>
     </div>
   </div>
