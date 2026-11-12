@@ -1,0 +1,14 @@
+{
+  "name": "painel-amplimed",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "oracle:check": "node --env-file=.env oracle/check.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "oracledb": "26.0.0"
+  }
+}

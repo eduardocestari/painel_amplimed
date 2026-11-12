@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#006b4d">
+  <title>Painel Amplimed | Acesso</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <aside class="brand-art" aria-label="Painel Amplimed">
+      <img src="/assets/painel.png" alt="" class="brand-photo">
+      <div class="art-shade"></div>
+      <div class="art-copy"><span class="brand-mark" aria-hidden="true">✳</span><span class="brand-name">ampli<span>med</span></span><p>Informação para cuidar melhor.</p></div>
+      <div class="art-footer">Acesso corporativo seguro</div>
+    </aside>
+    <section class="content">
+      <div class="content-inner">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> PAINEL AMPLIMED</div>
+        <div id="login-view">
+          <header><h1>Bem-vindo<span>.</span></h1><p>Entre com o mesmo usuário e senha do computador corporativo.</p></header>
+          <form id="login-form" autocomplete="on">
+            <label for="usuario">Usuário</label>
+            <input id="usuario" name="usuario" autocomplete="username" required maxlength="100" placeholder="Seu usuário de rede">
+            <label for="senha">Senha</label>
+            <div class="password-wrap"><input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="512" placeholder="Sua senha"><button id="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+            <button class="primary" id="entrar" type="submit">Entrar <span aria-hidden="true">→</span></button>
+            <p id="login-message" class="message" role="alert" hidden></p>
+          </form>
+          <p class="help">Use suas credenciais de rede (AD). Em caso de dificuldade, procure o suporte de TI.</p>
+        </div>
+        <div id="home-view" hidden>
+          <div class="success-icon" aria-hidden="true">✓</div>
+          <h1>Olá, <span id="nome"></span><span>.</span></h1>
+          <p class="home-copy">Acesso corporativo confirmado. Seu painel está pronto para as próximas etapas do projeto.</p>
+          <div class="user-card"><span>Conectado como</span><strong id="login"></strong></div>
+          <button id="sair" class="secondary" type="button">Sair da conta</button>
+          <p id="logout-message" class="message" role="alert" hidden></p>
+        </div>
+        <footer>© <span id="year"></span> Amplimed <span>•</span> Ambiente corporativo</footer>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

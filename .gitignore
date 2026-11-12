@@ -1,0 +1,8 @@
+.env
+node_modules/
+.pnpm-store/
+ic/
+*.log
+*.xlsx
+*.xls
+prompt/Kit_Saude_Integrada_Codex/
