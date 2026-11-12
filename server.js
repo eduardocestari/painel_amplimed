@@ -3,12 +3,16 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { authConfig, authenticate, clearFailures, createSession, deleteSession, getSession, isRateLimited, recordFailure } from './auth.js';
+import { getDashboardOverview } from './internal/dashboard.js';
 
 const root = new URL('.', import.meta.url);
+const dashboardRoutes = new Set(['/dashboard', '/dashboard/clinicas', '/dashboard/usuarios', '/dashboard/importacoes']);
 const staticFiles = new Map([
   ['/', ['public/index.html', 'text/html; charset=utf-8']],
   ['/styles.css', ['public/styles.css', 'text/css; charset=utf-8']],
   ['/app.js', ['public/app.js', 'text/javascript; charset=utf-8']],
+  ['/dashboard.css', ['public/dashboard.css', 'text/css; charset=utf-8']],
+  ['/dashboard.js', ['public/dashboard.js', 'text/javascript; charset=utf-8']],
   ['/assets/amplimed-oficial.png', ['docs/saude-integrada/referencias/03_LOGO_AMPLIMED_OFICIAL_FORNECIDO.png', 'image/png']],
   ['/assets/unimed-blumenau.png', ['public/assets/unimed-blumenau-fornecido.png', 'image/png']],
 ]);
@@ -47,9 +51,23 @@ export function createApp({ env = process.env, fetcher = fetch } = {}) {
         sendJson(res, user ? 200 : 401, user ? { user } : { detail: 'Sessão expirada.' });
         return;
       }
+      if (path === '/api/dashboard' && req.method === 'GET') {
+        const user = getSession(cookieValue(req, cookieName));
+        if (!user) { sendJson(res, 401, { detail: 'Sessão expirada.' }); return; }
+        sendJson(res, 200, getDashboardOverview());
+        return;
+      }
       if (path === '/api/auth/logout' && req.method === 'POST') {
         deleteSession(cookieValue(req, cookieName));
         sendJson(res, 200, { ok: true }, { 'Set-Cookie': `${cookieName}=; ${cookieAttrs}; Max-Age=0` });
+        return;
+      }
+      if (req.method === 'GET' && dashboardRoutes.has(path)) {
+        const user = getSession(cookieValue(req, cookieName));
+        if (!user) { res.writeHead(302, { Location: '/', 'Cache-Control': 'no-store' }); res.end(); return; }
+        const content = await readFile(new URL('public/dashboard.html', root));
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+        res.end(content);
         return;
       }
       if (path === '/api/auth/login' && req.method === 'POST') {

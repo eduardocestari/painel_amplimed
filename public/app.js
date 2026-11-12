@@ -1,17 +1,11 @@
 const $ = id => document.getElementById(id);
-const loginView = $('login-view');
-const homeView = $('home-view');
 const form = $('login-form');
 const message = $('login-message');
 const password = $('senha');
 const submit = $('entrar');
 
 function showUser(user) {
-  $('nome').textContent = user.nome || user.login;
-  $('login').textContent = user.login;
-  loginView.hidden = true;
-  homeView.hidden = false;
-  document.title = 'Saúde Integrada | Acesso confirmado';
+  if (user?.login) location.replace('/dashboard');
 }
 
 async function restore() {
@@ -46,6 +40,7 @@ form.addEventListener('submit', async event => {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || 'Não foi possível entrar.');
+    if (!data.user?.login) throw new Error('Resposta de autenticação inválida.');
     password.value = '';
     showUser(data.user);
   } catch (error) {
@@ -56,22 +51,5 @@ form.addEventListener('submit', async event => {
   } finally {
     submit.disabled = false;
     $('entrar-texto').textContent = 'Entrar com AD';
-  }
-});
-
-$('sair').addEventListener('click', async () => {
-  const output = $('logout-message');
-  output.hidden = true;
-  try {
-    const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
-    if (!response.ok) throw new Error();
-    form.reset();
-    homeView.hidden = true;
-    loginView.hidden = false;
-    document.title = 'Saúde Integrada | Acesso';
-    $('usuario').focus();
-  } catch {
-    output.textContent = 'Não foi possível encerrar a sessão.';
-    output.hidden = false;
   }
 });

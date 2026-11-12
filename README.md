@@ -2,6 +2,8 @@
 
 Base inicial inspirada no fluxo corporativo do `uni_eventos`: login e senha de rede autenticados pelo AD via ORDS, sessão protegida por cookie e conexão Oracle isolada em pool Thick Mode.
 
+A etapa visual `Saúde Integrada` inclui a Visão Geral em `/dashboard`, protegida pela sessão AD. Clínicas, Usuários e Importações têm páginas de navegação provisórias para as próximas etapas. Enquanto não houver lote importado e tabelas aprovadas, a API `/api/dashboard` devolve estado vazio; a interface não usa números dos mockups.
+
 ## Executar
 
 1. Use Node.js 20 ou superior e instale as dependências com `pnpm install`.

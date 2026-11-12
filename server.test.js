@@ -42,6 +42,10 @@ test('página e sessão exigem autenticação', async () => {
   assert.equal(unimedLogo.status, 200);
   const me = await fetch(`${base}/api/me`);
   assert.equal(me.status, 401);
+  const protectedPage = await fetch(`${base}/dashboard`, { redirect: 'manual' });
+  assert.equal(protectedPage.status, 302);
+  assert.equal(protectedPage.headers.get('location'), '/');
+  assert.equal((await fetch(`${base}/api/dashboard`)).status, 401);
 });
 
 test('AD rejeita senha incorreta e cria sessão com senha correta', async () => {
@@ -59,9 +63,22 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   const me = await fetch(`${base}/api/me`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(me.status, 200);
   assert.equal((await me.json()).user.login, 'eduardo');
+  const dashboard = await fetch(`${base}/dashboard`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(dashboard.status, 200);
+  assert.match(await dashboard.text(), /Visão Geral/);
+  const overview = await fetch(`${base}/api/dashboard`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(overview.status, 200);
+  const data = await overview.json();
+  assert.equal(data.status, 'awaiting_import');
+  assert.equal(data.kpis.medicosUnicos, null);
+  assert.deepEqual(data.charts.especialidades, []);
+  const clinics = await fetch(`${base}/dashboard/clinicas`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(clinics.status, 200);
   const logout = await fetch(`${base}/api/auth/logout`, { method: 'POST', headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(logout.status, 200);
   const afterLogout = await fetch(`${base}/api/me`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(afterLogout.status, 401);
+  assert.equal((await fetch(`${base}/api/dashboard`, { headers: { Cookie: cookie.split(';')[0] } })).status, 401);
+  assert.equal((await fetch(`${base}/dashboard`, { headers: { Cookie: cookie.split(';')[0] }, redirect: 'manual' })).status, 302);
   assert.equal(called, 2);
 });
