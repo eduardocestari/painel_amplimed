@@ -33,10 +33,13 @@ test('página e sessão exigem autenticação', async () => {
   const html = await page.text();
   assert.match(html, /Saúde Integrada \| Acesso/);
   assert.match(html, /assets\/amplimed-oficial\.png/);
+  assert.match(html, /assets\/unimed-blumenau\.png/);
   assert.match(html, /Entrar com AD/);
   const logo = await fetch(`${base}/assets/amplimed-oficial.png`);
   assert.equal(logo.status, 200);
   assert.equal(logo.headers.get('content-type'), 'image/png');
+  const unimedLogo = await fetch(`${base}/assets/unimed-blumenau.png`);
+  assert.equal(unimedLogo.status, 200);
   const me = await fetch(`${base}/api/me`);
   assert.equal(me.status, 401);
 });

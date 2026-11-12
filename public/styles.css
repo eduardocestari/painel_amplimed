@@ -6,3 +6,7 @@
 @media(max-width:800px){.benefits{display:none}.institutional-inner{padding-bottom:54px}.story{margin-top:25px}.lead{margin-bottom:0}}
 @media(max-width:800px){.page{flex-direction:column-reverse}}
 .amplimed-logo{mix-blend-mode:normal}.amplimed-logo img{mix-blend-mode:multiply}
+.unimed-logo{display:block;width:175px;flex:none}.unimed-logo img{display:block;width:100%;height:auto}.card-brands .unimed-logo{width:155px}
+.password-wrap input{padding-right:60px}#toggle-senha{display:grid;place-items:center;width:40px;height:38px;min-height:38px;padding:0;background:transparent;color:#596777}#toggle-senha:hover{background:#e8f6ee;color:#006d45}#toggle-senha svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}#toggle-senha .eye-off,#toggle-senha[aria-pressed="true"] .eye-on{display:none}#toggle-senha[aria-pressed="true"] .eye-off{display:block}
+@media(max-width:1050px){.institutional .unimed-logo{width:145px}}
+@media(max-width:480px){.institutional .unimed-logo{width:128px}.card-brands .unimed-logo{width:112px}.card-brands .amplimed-logo{width:117px;height:37px}.card-brands .amplimed-logo img{top:-43px;width:117px;height:117px}}

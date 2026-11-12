@@ -10,6 +10,7 @@ const staticFiles = new Map([
   ['/styles.css', ['public/styles.css', 'text/css; charset=utf-8']],
   ['/app.js', ['public/app.js', 'text/javascript; charset=utf-8']],
   ['/assets/amplimed-oficial.png', ['docs/saude-integrada/referencias/03_LOGO_AMPLIMED_OFICIAL_FORNECIDO.png', 'image/png']],
+  ['/assets/unimed-blumenau.png', ['public/assets/unimed-blumenau-fornecido.png', 'image/png']],
 ]);
 
 function sendJson(res, status, data, extra = {}) {

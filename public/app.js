@@ -25,8 +25,8 @@ restore();
 $('toggle-senha').addEventListener('click', () => {
   const visible = password.type === 'password';
   password.type = visible ? 'text' : 'password';
-  $('toggle-senha').textContent = visible ? 'Ocultar' : 'Mostrar';
   $('toggle-senha').setAttribute('aria-label', visible ? 'Ocultar senha' : 'Mostrar senha');
+  $('toggle-senha').title = visible ? 'Ocultar senha' : 'Mostrar senha';
   $('toggle-senha').setAttribute('aria-pressed', String(visible));
   password.focus();
 });

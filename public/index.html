@@ -13,7 +13,7 @@
     <section class="institutional" aria-labelledby="product-title">
       <div class="institutional-inner">
         <div class="brand-row">
-          <div class="unimed-name"><strong>Unimed Blumenau</strong><small>Marca institucional pendente</small></div>
+          <span class="unimed-logo"><img src="/assets/unimed-blumenau.png" alt="Unimed Blumenau"></span>
           <span class="brand-divider" aria-hidden="true"></span>
           <span class="amplimed-logo"><img src="/assets/amplimed-oficial.png" alt="Amplimed"></span>
         </div>
@@ -36,7 +36,7 @@
 
     <section class="access" aria-label="Acesso à plataforma">
       <div class="access-card">
-        <div class="card-brands"><div class="unimed-name"><strong>Unimed Blumenau</strong><small>Marca institucional pendente</small></div><span class="brand-divider" aria-hidden="true"></span><span class="amplimed-logo"><img src="/assets/amplimed-oficial.png" alt="Amplimed"></span></div>
+        <div class="card-brands"><span class="unimed-logo"><img src="/assets/unimed-blumenau.png" alt="Unimed Blumenau"></span><span class="brand-divider" aria-hidden="true"></span><span class="amplimed-logo"><img src="/assets/amplimed-oficial.png" alt="Amplimed"></span></div>
         <div class="card-product"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 6.9 23.5C-1 15.4 10.8 2.4 20.5 10l3.5 3 3.5-3c9.7-7.6 21.5 5.4 13.6 13.5L24 41Z"/><path d="M14 26h7l3-6 3 8 2-4h7"/></svg><span>Saúde Integrada</span></div>
 
         <div id="login-view">
@@ -45,7 +45,7 @@
             <label for="usuario">Usuário de rede</label>
             <div class="input-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><input id="usuario" name="usuario" autocomplete="username" required maxlength="100" placeholder="Digite seu usuário de rede (AD)"></div>
             <label for="senha">Senha</label>
-            <div class="input-wrap password-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="512" placeholder="Digite sua senha"><button id="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+            <div class="input-wrap password-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="512" placeholder="Digite sua senha"><button id="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha"><svg class="eye-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></svg><svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3 21 21M10 6.2A11 11 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.6M6.2 7.8A17 17 0 0 0 2 12s3.6 6 10 6a11 11 0 0 0 4-.7"/><path d="M10 10a2.8 2.8 0 0 0 4 4"/></svg></button></div>
             <button class="primary" id="entrar" type="submit"><span id="entrar-texto">Entrar com AD</span><span aria-hidden="true">→</span></button>
             <p id="login-message" class="message" role="alert" hidden></p>
           </form>
