@@ -30,7 +30,13 @@ after(() => new Promise(resolve => server.close(resolve)));
 test('página e sessão exigem autenticação', async () => {
   const page = await fetch(base);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /Bem-vindo/);
+  const html = await page.text();
+  assert.match(html, /Saúde Integrada \| Acesso/);
+  assert.match(html, /assets\/amplimed-oficial\.png/);
+  assert.match(html, /Entrar com AD/);
+  const logo = await fetch(`${base}/assets/amplimed-oficial.png`);
+  assert.equal(logo.status, 200);
+  assert.equal(logo.headers.get('content-type'), 'image/png');
   const me = await fetch(`${base}/api/me`);
   assert.equal(me.status, 401);
 });

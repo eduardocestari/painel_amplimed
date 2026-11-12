@@ -5,21 +5,20 @@ const form = $('login-form');
 const message = $('login-message');
 const password = $('senha');
 const submit = $('entrar');
-$('year').textContent = new Date().getFullYear();
 
 function showUser(user) {
   $('nome').textContent = user.nome || user.login;
   $('login').textContent = user.login;
   loginView.hidden = true;
   homeView.hidden = false;
-  document.title = 'Painel Amplimed | Início';
+  document.title = 'Saúde Integrada | Acesso confirmado';
 }
 
 async function restore() {
   try {
     const response = await fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' });
     if (response.ok) showUser((await response.json()).user);
-  } catch { /* A página de login continua disponível. */ }
+  } catch { /* A página de login permanece disponível. */ }
 }
 restore();
 
@@ -34,12 +33,15 @@ $('toggle-senha').addEventListener('click', () => {
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (submit.disabled) return;
   message.hidden = true;
   submit.disabled = true;
-  submit.firstChild.textContent = 'Autenticando ';
+  $('entrar-texto').textContent = 'Autenticando...';
   try {
     const response = await fetch('/api/auth/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify({ usuario: $('usuario').value, senha: password.value }),
     });
     const data = await response.json();
@@ -51,7 +53,10 @@ form.addEventListener('submit', async event => {
     message.hidden = false;
     password.value = '';
     password.focus();
-  } finally { submit.disabled = false; submit.firstChild.textContent = 'Entrar '; }
+  } finally {
+    submit.disabled = false;
+    $('entrar-texto').textContent = 'Entrar com AD';
+  }
 });
 
 $('sair').addEventListener('click', async () => {
@@ -63,7 +68,7 @@ $('sair').addEventListener('click', async () => {
     form.reset();
     homeView.hidden = true;
     loginView.hidden = false;
-    document.title = 'Painel Amplimed | Acesso';
+    document.title = 'Saúde Integrada | Acesso';
     $('usuario').focus();
   } catch {
     output.textContent = 'Não foi possível encerrar a sessão.';

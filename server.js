@@ -9,7 +9,7 @@ const staticFiles = new Map([
   ['/', ['public/index.html', 'text/html; charset=utf-8']],
   ['/styles.css', ['public/styles.css', 'text/css; charset=utf-8']],
   ['/app.js', ['public/app.js', 'text/javascript; charset=utf-8']],
-  ['/assets/painel.png', ['public/assets/painel.png', 'image/png']],
+  ['/assets/amplimed-oficial.png', ['docs/saude-integrada/referencias/03_LOGO_AMPLIMED_OFICIAL_FORNECIDO.png', 'image/png']],
 ]);
 
 function sendJson(res, status, data, extra = {}) {

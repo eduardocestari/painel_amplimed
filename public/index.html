@@ -4,42 +4,63 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#006b4d">
-  <title>Painel Amplimed | Acesso</title>
+  <title>Saúde Integrada | Acesso</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <main class="shell">
-    <aside class="brand-art" aria-label="Painel Amplimed">
-      <img src="/assets/painel.png" alt="" class="brand-photo">
-      <div class="art-shade"></div>
-      <div class="art-copy"><span class="brand-mark" aria-hidden="true">✳</span><span class="brand-name">ampli<span>med</span></span><p>Informação para cuidar melhor.</p></div>
-      <div class="art-footer">Acesso corporativo seguro</div>
-    </aside>
-    <section class="content">
-      <div class="content-inner">
-        <div class="eyebrow"><span class="eyebrow-dot"></span> PAINEL AMPLIMED</div>
+  <main class="page">
+    <section class="institutional" aria-labelledby="product-title">
+      <div class="institutional-inner">
+        <div class="brand-row">
+          <div class="unimed-name"><strong>Unimed Blumenau</strong><small>Marca institucional pendente</small></div>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="amplimed-logo"><img src="/assets/amplimed-oficial.png" alt="Amplimed"></span>
+        </div>
+
+        <div class="story">
+          <div class="product-name"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 6.9 23.5C-1 15.4 10.8 2.4 20.5 10l3.5 3 3.5-3c9.7-7.6 21.5 5.4 13.6 13.5L24 41Z"/><path d="M14 26h7l3-6 3 8 2-4h7"/></svg><h1 id="product-title">Saúde Integrada</h1></div>
+          <p class="lead">Integração de dados, clínicas e equipes para uma gestão em saúde mais eficiente, segura e colaborativa.</p>
+          <ul class="benefits">
+            <li><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 28h24M7 28V9h18v19M12 13h3v3h-3zm7 0h3v3h-3zm-7 7h3v3h-3zm7 0h3v3h-3zM13 9V4h6v5"/></svg></span><span><strong>Clínicas conectadas</strong><small>Visão unificada da rede</small></span></li>
+            <li><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><ellipse cx="16" cy="7" rx="11" ry="4"/><path d="M5 7v17c0 2.2 4.9 4 11 4s11-1.8 11-4V7M5 15c0 2.2 4.9 4 11 4s11-1.8 11-4M5 22c0 2.2 4.9 4 11 4s11-1.8 11-4"/></svg></span><span><strong>Dados integrados</strong><small>Informações confiáveis e atualizadas</small></span></li>
+            <li><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="11" cy="10" r="4"/><circle cx="23" cy="12" r="3"/><path d="M2 28v-3a9 9 0 0 1 18 0v3M18 21a7 7 0 0 1 12 5v2"/></svg></span><span><strong>Gestão da saúde</strong><small>Apoio à decisão e ao cuidado</small></span></li>
+            <li><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 17 13 8l5 4 4-3 6 6-10 11-6-5-3 2-5-6Z"/><path d="m13 16 6 5m-3-8 7 6"/></svg></span><span><strong>Parceria Unimed Blumenau e Amplimed</strong><small>Tecnologia e cuidado em conjunto</small></span></li>
+          </ul>
+        </div>
+
+        <div class="ambient-visual" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="visual-card"><span class="visual-card-title"></span><div class="visual-chart"><i></i><i></i><i></i><i></i><i></i></div><div class="visual-lines"><i></i><i></i><i></i></div></div></div>
+      </div>
+      <div class="wave wave-one" aria-hidden="true"></div><div class="wave wave-two" aria-hidden="true"></div>
+    </section>
+
+    <section class="access" aria-label="Acesso à plataforma">
+      <div class="access-card">
+        <div class="card-brands"><div class="unimed-name"><strong>Unimed Blumenau</strong><small>Marca institucional pendente</small></div><span class="brand-divider" aria-hidden="true"></span><span class="amplimed-logo"><img src="/assets/amplimed-oficial.png" alt="Amplimed"></span></div>
+        <div class="card-product"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 6.9 23.5C-1 15.4 10.8 2.4 20.5 10l3.5 3 3.5-3c9.7-7.6 21.5 5.4 13.6 13.5L24 41Z"/><path d="M14 26h7l3-6 3 8 2-4h7"/></svg><span>Saúde Integrada</span></div>
+
         <div id="login-view">
-          <header><h1>Bem-vindo<span>.</span></h1><p>Entre com o mesmo usuário e senha do computador corporativo.</p></header>
+          <header><h2>Acessar plataforma</h2><p>Autenticação corporativa via AD</p></header>
           <form id="login-form" autocomplete="on">
-            <label for="usuario">Usuário</label>
-            <input id="usuario" name="usuario" autocomplete="username" required maxlength="100" placeholder="Seu usuário de rede">
+            <label for="usuario">Usuário de rede</label>
+            <div class="input-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><input id="usuario" name="usuario" autocomplete="username" required maxlength="100" placeholder="Digite seu usuário de rede (AD)"></div>
             <label for="senha">Senha</label>
-            <div class="password-wrap"><input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="512" placeholder="Sua senha"><button id="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
-            <button class="primary" id="entrar" type="submit">Entrar <span aria-hidden="true">→</span></button>
+            <div class="input-wrap password-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="512" placeholder="Digite sua senha"><button id="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+            <button class="primary" id="entrar" type="submit"><span id="entrar-texto">Entrar com AD</span><span aria-hidden="true">→</span></button>
             <p id="login-message" class="message" role="alert" hidden></p>
           </form>
-          <p class="help">Use suas credenciais de rede (AD). Em caso de dificuldade, procure o suporte de TI.</p>
         </div>
+
         <div id="home-view" hidden>
           <div class="success-icon" aria-hidden="true">✓</div>
-          <h1>Olá, <span id="nome"></span><span>.</span></h1>
-          <p class="home-copy">Acesso corporativo confirmado. Seu painel está pronto para as próximas etapas do projeto.</p>
-          <div class="user-card"><span>Conectado como</span><strong id="login"></strong></div>
+          <h2>Bem-vindo, <span id="nome"></span></h2>
+          <p class="home-copy">Sua autenticação corporativa foi confirmada.</p>
+          <div class="user-card"><span>Usuário de rede</span><strong id="login"></strong></div>
           <button id="sair" class="secondary" type="button">Sair da conta</button>
           <p id="logout-message" class="message" role="alert" hidden></p>
         </div>
-        <footer>© <span id="year"></span> Amplimed <span>•</span> Ambiente corporativo</footer>
+
+        <div class="access-note"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Acesso restrito à equipe autorizada.</span></div>
       </div>
     </section>
   </main>
