@@ -25,7 +25,7 @@ test('simulação registra histórico sem dados pessoais e aponta hash duplicado
     const onDisk = await readFile(historyPath, 'utf8');
     assert.equal(onDisk.includes('Pessoa Teste'), false);
     assert.equal(onDisk.includes('cpfMascarado'), false);
-  } finally { await rm(dir, { recursive: true, force: true }); }
+  } finally { await rm(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); }
 });
 
 test('configuração limita tamanho e restringe importadores por login explícito', () => {
@@ -47,5 +47,5 @@ test('arquivo rejeitado fica no histórico sem conteúdo da planilha', async () 
     assert.equal(entry.resultado, 'REJEITADO');
     assert.equal(entry.codigoErro, 'CABECALHOS_INVALIDOS');
     assert.equal((await readFile(historyPath, 'utf8')).includes('texto privado'), false);
-  } finally { await rm(dir, { recursive: true, force: true }); }
+  } finally { await rm(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); }
 });

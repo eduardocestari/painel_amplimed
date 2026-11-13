@@ -40,6 +40,7 @@ test('página e sessão exigem autenticação', async () => {
   assert.match(html, /assets\/amplimed-oficial\.png/);
   assert.match(html, /assets\/unimed-blumenau\.png/);
   assert.match(html, /Entrar com AD/);
+  assert.doesNotMatch(html, /Sua autenticação corporativa foi confirmada/);
   const logo = await fetch(`${base}/assets/amplimed-oficial.png`);
   assert.equal(logo.status, 200);
   assert.equal(logo.headers.get('content-type'), 'image/png');
@@ -74,6 +75,9 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   const me = await fetch(`${base}/api/me`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(me.status, 200);
   assert.equal((await me.json()).user.login, 'eduardo');
+  const home = await fetch(base, { headers: { Cookie: cookie.split(';')[0] }, redirect: 'manual' });
+  assert.equal(home.status, 302);
+  assert.equal(home.headers.get('location'), '/dashboard');
   const dashboard = await fetch(`${base}/dashboard`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(dashboard.status, 200);
   assert.match(await dashboard.text(), /Visão Geral/);

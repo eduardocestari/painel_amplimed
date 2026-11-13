@@ -153,6 +153,11 @@ export function createApp({ env = process.env, fetcher = fetch, registry = creat
         sendJson(res, 200, { user }, { 'Set-Cookie': `${cookieName}=${token}; ${cookieAttrs}; Max-Age=${ttlSeconds}` });
         return;
       }
+      if (path === '/' && req.method === 'GET' && getSession(cookieValue(req, cookieName))) {
+        res.writeHead(302, { Location: '/dashboard', 'Cache-Control': 'no-store' });
+        res.end();
+        return;
+      }
       if (req.method === 'GET' && staticFiles.has(path)) {
         const [file, contentType] = staticFiles.get(path);
         const content = await readFile(new URL(file, root));
