@@ -7,13 +7,18 @@ const env = {
   ORDS_BASE_URL: 'https://example.test/ords', ORDS_AUTH_PATH: '/Wiki/Auth',
   ORDS_AUTH_METHOD: 'GET', ORDS_AUTHORIZATION: 'test-token',
   SESSION_COOKIE_NAME: 'test_session', SESSION_COOKIE_SECURE: 'FALSE',
+  SAUDE_INTEGRADA_IMPORT_LOGINS: 'eduardo',
 };
 let server;
 let base;
 let called = 0;
+let imported = 0;
 
 before(async () => {
-  server = createServer(createApp({ env, fetcher: async (url) => {
+  server = createServer(createApp({ env, imports: {
+    list: async () => [],
+    simulate: async () => { imported++; return { lote: { resultado: 'VALIDADO' }, preview: [], persistenceAvailable: false }; },
+  }, fetcher: async (url) => {
     called++;
     assert.equal(url.pathname, '/ords/Wiki/Auth');
     assert.equal(url.searchParams.get('Authorization'), 'test-token');
@@ -49,6 +54,8 @@ test('página e sessão exigem autenticação', async () => {
   for (const path of ['/api/clinicas', '/api/clinicas/detalhe', '/api/usuarios', '/api/usuarios/detalhe']) {
     assert.equal((await fetch(`${base}${path}`)).status, 401);
   }
+  assert.equal((await fetch(`${base}/api/importacoes`)).status, 401);
+  assert.equal((await fetch(`${base}/api/importacoes/simular`, { method: 'POST' })).status, 401);
   assert.equal((await fetch(`${base}/dashboard/usuarios`, { redirect: 'manual' })).status, 302);
 });
 
@@ -80,6 +87,9 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   assert.equal(clinics.status, 200);
   const usersPage = await fetch(`${base}/dashboard/usuarios`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(usersPage.status, 200);
+  const importsPage = await fetch(`${base}/dashboard/importacoes`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(importsPage.status, 200);
+  assert.match(await importsPage.text(), /Simular arquivo XLSX/);
   const clinicsData = await fetch(`${base}/api/clinicas`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(clinicsData.status, 200);
   assert.equal((await clinicsData.json()).status, 'awaiting_import');
@@ -88,6 +98,17 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   assert.equal((await usersData.json()).status, 'awaiting_import');
   const badQuery = await fetch(`${base}/api/usuarios?page=0`, { headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(badQuery.status, 400);
+  const importHeaders = { Cookie: cookie.split(';')[0], Origin: base,
+    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'X-File-Name': 'dados.xlsx' };
+  const importHistory = await fetch(`${base}/api/importacoes`, { headers: { Cookie: cookie.split(';')[0] } });
+  assert.equal(importHistory.status, 200);
+  assert.deepEqual((await importHistory.json()).history, []);
+  assert.equal((await fetch(`${base}/api/importacoes/simular`, { method: 'POST', headers: { ...importHeaders, Origin: 'https://outro.test' }, body: 'dados' })).status, 403);
+  assert.equal((await fetch(`${base}/api/importacoes/simular`, { method: 'POST', headers: { ...importHeaders, 'Content-Type': 'text/plain' }, body: 'dados' })).status, 415);
+  const simulation = await fetch(`${base}/api/importacoes/simular`, { method: 'POST', headers: importHeaders, body: 'dados' });
+  assert.equal(simulation.status, 200);
+  assert.equal((await simulation.json()).persistenceAvailable, false);
+  assert.equal(imported, 1);
   const logout = await fetch(`${base}/api/auth/logout`, { method: 'POST', headers: { Cookie: cookie.split(';')[0] } });
   assert.equal(logout.status, 200);
   const afterLogout = await fetch(`${base}/api/me`, { headers: { Cookie: cookie.split(';')[0] } });

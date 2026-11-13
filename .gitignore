@@ -1,5 +1,6 @@
 .env
 node_modules/
+data/
 .pnpm-store/
 ic/
 *.log

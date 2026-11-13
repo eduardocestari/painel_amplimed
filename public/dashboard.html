@@ -110,7 +110,19 @@
           <div class="panel data-panel"><p id="user-detail-status" class="data-status" role="status">Carregando detalhe...</p><dl id="user-fields" class="detail-fields"></dl></div>
         </section>
 
-        <section id="placeholder-page" class="placeholder-page" hidden aria-labelledby="placeholder-title"><div class="placeholder-card"><span class="placeholder-icon"><svg aria-hidden="true"><use href="#i-upload"></use></svg></span><span class="eyebrow">PRÓXIMA ETAPA</span><h1 id="placeholder-title"></h1><p id="placeholder-message"></p><a class="button-primary" href="/dashboard">Voltar à Visão Geral</a></div></section>
+        <section id="imports-page" class="data-page" hidden aria-labelledby="imports-title">
+          <div class="page-heading"><h1 id="imports-title">Importações</h1><p>Valide a exportação Amplimed em simulação antes de qualquer gravação.</p></div>
+          <p id="imports-access" class="privacy-note" hidden></p>
+          <div id="imports-content">
+            <div class="panel data-panel"><h2>Simular arquivo XLSX</h2><p class="data-status">A simulação não altera o Oracle nem substitui a visão atual. O arquivo é processado em memória; o histórico guarda somente metadados.</p>
+              <form id="imports-form" class="import-form"><label for="imports-file">Arquivo de exportação</label><input id="imports-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required><p id="imports-limit" class="field-hint">Formato .xlsx</p><button id="imports-submit" class="button-primary" type="submit">Simular e validar</button></form>
+              <p id="imports-status" class="data-status" role="status">Selecione o arquivo para começar.</p>
+            </div>
+            <div id="imports-result" class="panel data-panel" hidden><h2>Resultado da validação</h2><p id="imports-summary" class="data-status"></p><div id="imports-warnings" class="import-warnings"></div><p id="imports-numeric-note" class="variant-warning" hidden></p><p id="imports-duplicate" class="variant-warning" hidden></p><p class="privacy-note">A gravação do snapshot e a confirmação de duplicidade serão habilitadas após a aprovação do esquema Oracle. Nenhuma linha foi persistida nesta etapa.</p><button class="button-primary" type="button" disabled title="Aguardando aprovação do esquema Oracle">Confirmar gravação no Oracle</button></div>
+            <div id="imports-preview-panel" class="panel data-panel" hidden><h2>Prévia das primeiras linhas</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Linha</th><th>Nome</th><th>Clínica</th><th>Especialidade</th><th>Permissão</th><th>CPF</th><th>Último login</th></tr></thead><tbody id="imports-preview-rows"></tbody></table></div></div>
+            <div class="panel data-panel"><div class="database-heading"><div class="database-title"><h2>Histórico de simulações</h2><p>Data, usuário AD, quantidade e resultado; sem CPF ou e-mail.</p></div><button id="imports-refresh" class="button-secondary" type="button">Atualizar histórico</button></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Data</th><th>Usuário AD</th><th>Linhas</th><th>Resultado</th><th>Avisos</th></tr></thead><tbody id="imports-history-rows"><tr><td colspan="5" class="empty-cell">Carregando histórico...</td></tr></tbody></table></div></div>
+          </div>
+        </section>
       </main>
     </div>
   </div>

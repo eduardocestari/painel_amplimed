@@ -6,7 +6,7 @@ const routes = {
   '/dashboard': { key: 'overview', title: 'Visão Geral' },
   '/dashboard/clinicas': { key: 'clinicas', title: 'Clínicas' },
   '/dashboard/usuarios': { key: 'usuarios', title: 'Usuários' },
-  '/dashboard/importacoes': { key: 'importacoes', title: 'Importações', message: 'A validação e o histórico de importações serão adicionados na etapa 04.' },
+  '/dashboard/importacoes': { key: 'importacoes', title: 'Importações' },
 };
 const route = routes[location.pathname] || routes['/dashboard'];
 
@@ -394,6 +394,85 @@ async function loadUserDetail() {
   }
 }
 
+const importDate = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+function renderImportHistory(entries) {
+  const body = $('imports-history-rows');
+  body.replaceChildren();
+  if (!entries.length) { loadingRow('imports-history-rows', 5, 'Nenhuma simulação registrada.'); return; }
+  for (const entry of entries) {
+    const row = document.createElement('tr');
+    const date = new Date(entry.completedAt || entry.startedAt);
+    cell(row, Number.isFinite(date.getTime()) ? importDate.format(date) : '—');
+    cell(row, entry.usuarioAd);
+    cell(row, number.format(entry.quantidade || 0));
+    cell(row, entry.resultado);
+    const warnings = entry.avisos;
+    cell(row, warnings ? `${warnings.cpfInvalido} CPF · ${warnings.criacaoInvalida + warnings.ultimoLoginInvalido} datas` : entry.codigoErro || '—');
+    body.append(row);
+  }
+}
+
+async function loadImports() {
+  try {
+    const response = await fetch('/api/importacoes', { credentials: 'same-origin', cache: 'no-store' });
+    if (response.status === 401) { location.replace('/'); return; }
+    if (response.status === 403) {
+      $('imports-content').hidden = true;
+      $('imports-access').hidden = false;
+      $('imports-access').textContent = 'Seu usuário AD não está autorizado a simular importações. Solicite a inclusão do login na configuração de importadores.';
+      return;
+    }
+    if (!response.ok) throw new Error();
+    const data = await response.json();
+    $('imports-limit').textContent = `Formato ${data.allowedExtension} · tamanho máximo ${number.format(data.maxBytes / 1024 / 1024)} MB`;
+    $('imports-file').dataset.maxBytes = String(data.maxBytes);
+    renderImportHistory(data.history);
+  } catch {
+    loadingRow('imports-history-rows', 5, 'Não foi possível carregar o histórico.');
+  }
+}
+
+function renderImportResult(result) {
+  const entry = result.lote;
+  $('imports-result').hidden = false;
+  $('imports-preview-panel').hidden = false;
+  $('imports-summary').textContent = `${number.format(entry.quantidade)} linhas validadas. Simulação concluída; nenhum dado gravado no Oracle.`;
+  const warningDefinitions = [
+    ['CPF inválido ou ausente', entry.avisos.cpfInvalido],
+    ['Data de criação inválida', entry.avisos.criacaoInvalida],
+    ['Último login inválido', entry.avisos.ultimoLoginInvalido],
+    ['Identificadores numéricos na origem', entry.avisos.identificadoresNumericos],
+  ];
+  const warnings = $('imports-warnings');
+  warnings.replaceChildren();
+  for (const [label, count] of warningDefinitions) {
+    const item = document.createElement('div');
+    item.className = `import-warning${count ? ' warn' : ''}`;
+    const value = document.createElement('strong');
+    value.textContent = number.format(count);
+    const description = document.createElement('span');
+    description.textContent = label;
+    item.append(value, description);
+    warnings.append(item);
+  }
+  $('imports-numeric-note').hidden = !entry.avisos.identificadoresNumericos;
+  $('imports-numeric-note').textContent = entry.avisos.identificadoresNumericos
+    ? 'Alguns CPF, CRM ou Usuclin vieram como células numéricas. Zeros iniciais que o Excel já removeu não podem ser recuperados com segurança.' : '';
+  $('imports-duplicate').hidden = !entry.duplicadoDe;
+  $('imports-duplicate').textContent = entry.duplicadoDe
+    ? 'O conteúdo deste arquivo é idêntico a uma simulação anterior. A futura gravação exigirá confirmação explícita de duplicidade.' : '';
+  const body = $('imports-preview-rows');
+  body.replaceChildren();
+  for (const item of result.preview) {
+    const row = document.createElement('tr');
+    const login = item.ultimoLogin === 'Não informada' && item.ultimoLoginOriginal
+      ? `Não informada · original: ${item.ultimoLoginOriginal}` : item.ultimoLogin;
+    for (const value of [item.linhaExcel, item.nome, item.clinica, item.especialidade, item.permissao, item.cpfMascarado, login]) cell(row, value);
+    body.append(row);
+  }
+}
+
 async function init() {
   document.title = `${route.title} | Saúde Integrada`;
   document.querySelector(`[data-route="${route.key}"]`)?.setAttribute('aria-current', 'page');
@@ -406,9 +485,7 @@ async function init() {
     $(query.has('id') ? 'user-detail-page' : 'users-page').hidden = false;
   } else if (route.key === 'importacoes') {
     $('overview-page').hidden = true;
-    $('placeholder-page').hidden = false;
-    $('placeholder-title').textContent = route.title;
-    $('placeholder-message').textContent = route.message;
+    $('imports-page').hidden = false;
   }
   try {
     const response = await fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' });
@@ -422,6 +499,7 @@ async function init() {
   if (route.key === 'overview') await loadOverview();
   else if (route.key === 'clinicas') await (query.has('chave') ? loadClinicDetail() : loadClinics());
   else if (route.key === 'usuarios') await (query.has('id') ? loadUserDetail() : loadUsers());
+  else if (route.key === 'importacoes') await loadImports();
 }
 
 $('refresh-data').addEventListener('click', loadOverview);
@@ -452,6 +530,38 @@ $('users-form').addEventListener('submit', event => {
 $('users-clear').addEventListener('click', () => {
   changeQuery({ q: '', clinica: '', especialidade: '', permissao: '', situacao: '', page: '' });
   loadUsers();
+});
+$('imports-refresh').addEventListener('click', loadImports);
+$('imports-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const file = $('imports-file').files[0];
+  if (!file) return;
+  const maxBytes = Number($('imports-file').dataset.maxBytes || 10 * 1024 * 1024);
+  if (!/\.xlsx$/i.test(file.name) || !file.size || file.size > maxBytes) {
+    $('imports-status').textContent = 'Selecione um XLSX dentro do tamanho permitido.';
+    return;
+  }
+  const button = $('imports-submit');
+  button.disabled = true;
+  $('imports-status').textContent = 'Processando e validando o arquivo...';
+  $('imports-result').hidden = true;
+  $('imports-preview-panel').hidden = true;
+  try {
+    const response = await fetch('/api/importacoes/simular', { method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'X-File-Name': encodeURIComponent(file.name) },
+      body: file });
+    if (response.status === 401) { location.replace('/'); return; }
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Não foi possível validar o arquivo.');
+    renderImportResult(data);
+    $('imports-status').textContent = 'Validação concluída.';
+    await loadImports();
+  } catch (error) {
+    $('imports-status').textContent = error.message || 'Não foi possível validar o arquivo.';
+    await loadImports();
+  } finally {
+    button.disabled = false;
+  }
 });
 $('logout').addEventListener('click', async () => {
   const button = $('logout');
