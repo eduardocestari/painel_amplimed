@@ -6,6 +6,7 @@ import { authConfig, authenticate, clearFailures, createSession, deleteSession, 
 import { getDashboardOverview } from './internal/dashboard.js';
 import { createRegistry } from './internal/registry.js';
 import { createImportService, importConfig } from './internal/import-service.js';
+import { createOracleRepository } from './oracle/repository.js';
 
 const root = new URL('.', import.meta.url);
 const dashboardRoutes = new Set(['/dashboard', '/dashboard/clinicas', '/dashboard/usuarios', '/dashboard/importacoes']);
@@ -51,9 +52,11 @@ function cookieValue(req, name) {
   return item ? item.slice(name.length + 1) : null;
 }
 
-export function createApp({ env = process.env, fetcher = fetch, registry = createRegistry(), imports = createImportService() } = {}) {
+export function createApp({ env = process.env, fetcher = fetch, registry, imports = createImportService() } = {}) {
   const config = authConfig(env);
   const importSettings = importConfig(env);
+  const activeRegistry = registry || createRegistry({ readSnapshot: String(env.SAUDE_INTEGRADA_ORACLE_READ_ENABLED).toUpperCase() === 'TRUE'
+    ? createOracleRepository({ schema: env.ORACLE_APP_SCHEMA }).readCurrentSnapshot : async () => null });
   const cookieName = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(env.SESSION_COOKIE_NAME || '') ? env.SESSION_COOKIE_NAME : 'painel_session';
   const ttlSeconds = Math.min(86400, Math.max(300, Number(env.SESSION_TTL_SECONDS || 28800)));
   const secure = String(env.SESSION_COOKIE_SECURE).toUpperCase() === 'TRUE' || env.NODE_ENV === 'production';
@@ -72,17 +75,17 @@ export function createApp({ env = process.env, fetcher = fetch, registry = creat
       if (path === '/api/dashboard' && req.method === 'GET') {
         const user = getSession(cookieValue(req, cookieName));
         if (!user) { sendJson(res, 401, { detail: 'Sessão expirada.' }); return; }
-        sendJson(res, 200, getDashboardOverview());
+        sendJson(res, 200, getDashboardOverview(await activeRegistry.snapshot()));
         return;
       }
       if (req.method === 'GET' && ['/api/clinicas', '/api/clinicas/detalhe', '/api/usuarios', '/api/usuarios/detalhe'].includes(path)) {
         const user = getSession(cookieValue(req, cookieName));
         if (!user) { sendJson(res, 401, { detail: 'Sessão expirada.' }); return; }
         let data;
-        if (path === '/api/clinicas') data = await registry.listClinics(requestUrl.searchParams);
-        else if (path === '/api/clinicas/detalhe') data = await registry.clinicDetail(requestUrl.searchParams);
-        else if (path === '/api/usuarios') data = await registry.listUsers(requestUrl.searchParams);
-        else data = await registry.userDetail(requestUrl.searchParams.get('id'), { canViewPersonal: personalViewers.has(user.login.toLowerCase()) });
+        if (path === '/api/clinicas') data = await activeRegistry.listClinics(requestUrl.searchParams);
+        else if (path === '/api/clinicas/detalhe') data = await activeRegistry.clinicDetail(requestUrl.searchParams);
+        else if (path === '/api/usuarios') data = await activeRegistry.listUsers(requestUrl.searchParams);
+        else data = await activeRegistry.userDetail(requestUrl.searchParams.get('id'), { canViewPersonal: personalViewers.has(user.login.toLowerCase()) });
         sendJson(res, data ? 200 : 404, data || { detail: 'Registro não encontrado.' });
         return;
       }

@@ -159,7 +159,7 @@ function renderOverview(data) {
     setMetric('metric-import', 'metric-import-note', awaiting ? 'Nenhum lote' : '—', awaiting ? 'Aguardando primeira importação' : 'Dado indisponível');
   }
   renderClinicChart(data?.charts?.medicosPorClinica);
-  renderDonut('specialties-chart', data?.charts?.especialidades, 'médicos');
+  renderDonut('specialties-chart', data?.charts?.especialidades, 'soma por especialidade');
   renderDonut('situations-chart', data?.charts?.situacoes, 'registros');
   renderPreview(data?.preview, awaiting ? 'Nenhum registro importado ainda.' : 'Nenhum registro disponível.');
 }

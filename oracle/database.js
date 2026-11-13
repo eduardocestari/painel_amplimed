@@ -53,6 +53,10 @@ async function getPool() {
   return poolPromise;
 }
 
+export async function acquireConnection() {
+  return (await getPool()).getConnection();
+}
+
 export async function checkConnection() {
   const connection = await (await getPool()).getConnection();
   try {
@@ -63,6 +67,12 @@ export async function checkConnection() {
   } finally {
     try { await connection.rollback(); } finally { await connection.close(); }
   }
+}
+
+export async function getServerVersion() {
+  const connection = await (await getPool()).getConnection();
+  try { return connection.oracleServerVersionString; }
+  finally { await connection.close(); }
 }
 
 export async function closePool() {

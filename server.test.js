@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { after, before, test } from 'node:test';
 import { createApp } from './server.js';
+import { createRegistry } from './internal/registry.js';
 
 const env = {
   ORDS_BASE_URL: 'https://example.test/ords', ORDS_AUTH_PATH: '/Wiki/Auth',
@@ -120,4 +121,29 @@ test('AD rejeita senha incorreta e cria sessão com senha correta', async () => 
   assert.equal((await fetch(`${base}/api/dashboard`, { headers: { Cookie: cookie.split(';')[0] } })).status, 401);
   assert.equal((await fetch(`${base}/dashboard`, { headers: { Cookie: cookie.split(';')[0] }, redirect: 'manual' })).status, 302);
   assert.equal(called, 2);
+});
+
+test('dashboard usa snapshot do backend quando a fonte Oracle estiver habilitada', async () => {
+  const registry = createRegistry({ readSnapshot: async () => ({ completedAt: '2026-11-12T15:00:00Z', records: [
+    { id: 1, linhaExcel: 2, nome: 'Pessoa Teste', cpf: '529.982.247-25', permissao: 'Médico',
+      clinica: 'Clínica Teste', especialidade: 'Cardiologia', situacao: 'Cooperado',
+      ultimoLoginOriginal: '28', dtUltimoLogin: null },
+  ] }) });
+  const app = createServer(createApp({ env, registry, fetcher: async () => new Response(
+    JSON.stringify({ Result: 1, Usuario: 'eduardo', Nome: 'Eduardo' }), { status: 200 }) }));
+  await new Promise(resolve => app.listen(0, '127.0.0.1', resolve));
+  try {
+    const local = `http://127.0.0.1:${app.address().port}`;
+    const login = await fetch(`${local}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario: 'eduardo', senha: 'senha-correta' }) });
+    assert.equal(login.status, 200);
+    const cookie = login.headers.get('set-cookie').split(';')[0];
+    const overview = await fetch(`${local}/api/dashboard`, { headers: { Cookie: cookie } });
+    assert.equal(overview.status, 200);
+    const data = await overview.json();
+    assert.equal(data.status, 'ready');
+    assert.equal(data.kpis.registros, 1);
+    assert.equal(data.kpis.medicosUnicos, 1);
+    assert.equal(data.charts.especialidades[0].count, 1);
+  } finally { await new Promise(resolve => app.close(resolve)); }
 });

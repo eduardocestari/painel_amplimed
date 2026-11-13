@@ -231,6 +231,7 @@ export function createRegistry({ readSnapshot = async () => null } = {}) {
     return value;
   };
   return {
+    snapshot,
     listClinics: async params => listClinics(await snapshot(), params),
     clinicDetail: async params => clinicDetail(await snapshot(), params),
     listUsers: async params => listUsers(await snapshot(), params),
